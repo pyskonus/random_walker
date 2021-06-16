@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/random_walker.dir/main.cpp.o CMakeFiles/random_walker.dir/src/rw_image.cpp.o -o random_walker  -lpng 
