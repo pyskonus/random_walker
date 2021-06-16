@@ -2,6 +2,7 @@
 // Created by pyskonus on 16.06.21.
 //
 
+#include <iostream>
 #include "../inc/main_computations.h"
 
 double b_entry(unsigned u_node, const std::vector<std::pair<unsigned, unsigned>>& order,
@@ -41,4 +42,39 @@ double weight(const Eigen::MatrixXd& img, std::pair<unsigned, unsigned> node1, s
     /// TODO: make it work for 3 channels
     double BETA = 2000;
     return exp(-BETA*pow(img.coeffRef(node1.first, node1.second) - img.coeffRef(node2.first, node2.second), 2));
+}
+
+Eigen::MatrixXd get_L_u(const std::vector<std::pair<unsigned, unsigned>>& order,
+                        const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds, const Eigen::MatrixXd& img,
+                        std::pair<unsigned, unsigned> shape)
+{
+    unsigned l = seeds.size();
+    Eigen::MatrixXd res{order.size()-l, order.size()-l};
+    res.setZero();
+
+    for (unsigned i = l; i < order.size(); ++i) {
+        for (unsigned j = l; j < order.size(); ++j) {
+            if (i==j) {
+                auto adj = adjacent_nodes(i, order, shape);
+                for (const auto& el: adj)
+                    res.coeffRef(i-l, j-l) += weight(img, order[i], el);
+            } else if (adjacent(order[i], order[j])) {
+                res.coeffRef(i-l, j-l) = -weight(img, order[i], order[j]);
+            }
+        }
+    }
+    return res;
+}
+
+bool adjacent(std::pair<unsigned, unsigned> node1, std::pair<unsigned, unsigned> node2)
+{
+    if (node1.first == node2.first) {
+        if (node1.second == node2.second + 1 || node1.second == node2.second - 1)
+            return true;
+    }
+    if (node1.second == node2.second) {
+        if (node1.first == node2.first + 1 || node1.first == node2.first - 1)
+            return true;
+    }
+    return false;
 }

@@ -16,4 +16,10 @@ std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(unsigned, const std::v
 
 double weight(const Eigen::MatrixXd&, std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
 
+Eigen::MatrixXd get_L_u(const std::vector<std::pair<unsigned, unsigned>>&,
+        const std::map<std::pair<unsigned, unsigned>, unsigned>&, const Eigen::MatrixXd&,
+        std::pair<unsigned, unsigned>);
+
+bool adjacent(std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
+
 #endif //RANDOM_WALKER_MAIN_COMPUTATIONS_H

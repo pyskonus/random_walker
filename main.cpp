@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
         for (unsigned i = 0; i < b.size(); ++i) {
             b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.height, wrapper.width}, seeds, cur_seed, gray);
         }
+        auto L_u = get_L_u(order, seeds, gray, std::pair<unsigned, unsigned>{wrapper.height, wrapper.width});
     }
 
     wrapper.from_matrix(gray);
