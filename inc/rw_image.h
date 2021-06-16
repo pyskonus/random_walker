@@ -10,12 +10,25 @@
 #include <png.h>
 #include <iostream>
 
-void read_meta(FILE* fp, unsigned int& width, unsigned int& height, png_byte& color_type, png_byte& bit_depth, const png_structp& png, const png_infop& info);
-
-void read_png_file(FILE* fp, png_bytep *row_pointers, unsigned int& width, unsigned int& height, png_byte& color_type, png_byte& bit_depth, png_structp& png, png_infop& info);
-
-void write_png_file(char *filename, png_bytep *row_pointers, unsigned int width, unsigned int height, png_byte& bit_depth);
-
-void process_png_file(png_bytep *row_pointers, unsigned int width, unsigned int height);
+class PNG
+{
+public:
+    unsigned int width, height;
+    png_bytep* row_pointers;
+    PNG(const char* filename);
+    PNG() = delete;
+    PNG(PNG const&) = delete;
+    PNG(PNG&&) = delete;
+    ~PNG() = default;
+    void read_png_file();
+    void write_png_file(char *filename) const;
+    void process_png_file() const;
+private:
+    png_byte color_type;
+    png_byte bit_depth;
+    png_structp png;
+    png_infop info;
+    FILE* fp;
+};
 
 #endif //RANDOM_WALKER_RW_IMAGE_H

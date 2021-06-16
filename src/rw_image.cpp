@@ -4,21 +4,31 @@
 
 #include "../inc/rw_image.h"
 
-void read_meta(FILE* fp, unsigned int& width, unsigned int& height, png_byte& color_type, png_byte& bit_depth, const png_structp& png, const png_infop& info) {
+PNG::PNG(const char *filename) {
+    fp = fopen(filename, "rb");
+
+    png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if(!png) abort();
+    info = png_create_info_struct(png);
+    if(!info) abort();
     png_init_io(png, fp);
 
     png_read_info(png, info);
+
 
     width      = png_get_image_width(png, info);
     height     = png_get_image_height(png, info);
     color_type = png_get_color_type(png, info);
     bit_depth  = png_get_bit_depth(png, info);
+
+    row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+    for(unsigned y = 0; y < height; y++) {
+        row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
+    }
 }
 
-void read_png_file(FILE* fp, png_bytep *row_pointers, unsigned int& width, unsigned int& height, png_byte& color_type, png_byte& bit_depth, png_structp& png, png_infop& info) {
+void PNG::read_png_file() {
     /*if(setjmp(png_jmpbuf(png))) abort();*/
-
-    png_init_io(png, fp);
 
     // Read any color_type into 8bit depth, RGBA format.
     // See http://www.libpng.org/pub/png/libpng-manual.txt
@@ -51,26 +61,27 @@ void read_png_file(FILE* fp, png_bytep *row_pointers, unsigned int& width, unsig
     png_read_image(png, row_pointers);
 
     png_destroy_read_struct(&png, &info, nullptr);
+    fclose(fp);     /// could close in destructor tho
 }
 
-void write_png_file(char *filename, png_bytep *row_pointers, unsigned int width, unsigned int height, png_byte& bit_depth) {
-    FILE *fp = fopen(filename, "wb");
-    if(!fp) abort();
+void PNG::write_png_file(char *filename) const {
+    FILE *fpw = fopen(filename, "wb");
+    if(!fpw) abort();
 
-    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-    if (!png) abort();
+    png_structp png1 = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (!png1) abort();
 
-    png_infop info = png_create_info_struct(png);
-    if (!info) abort();
+    png_infop info1 = png_create_info_struct(png1);
+    if (!info1) abort();
 
     /*if (setjmp(png_jmpbuf(png))) abort();*/
 
-    png_init_io(png, fp);
+    png_init_io(png1, fpw);
 
     // Output is 8bit depth, RGBA format.
     png_set_IHDR(
-            png,
-            info,
+            png1,
+            info1,
             width, height,
             8,
             PNG_COLOR_TYPE_RGBA,
@@ -78,7 +89,7 @@ void write_png_file(char *filename, png_bytep *row_pointers, unsigned int width,
             PNG_COMPRESSION_TYPE_DEFAULT,
             PNG_FILTER_TYPE_DEFAULT
     );
-    png_write_info(png, info);
+    png_write_info(png1, info1);
 
     // To remove the alpha channel for PNG_COLOR_TYPE_RGB format,
     // Use png_set_filler().
@@ -86,23 +97,23 @@ void write_png_file(char *filename, png_bytep *row_pointers, unsigned int width,
 
     if (!row_pointers) abort();
 
-    png_write_image(png, row_pointers);
-    png_write_end(png, nullptr);
+    png_write_image(png1, row_pointers);
+    png_write_end(png1, nullptr);
 
-    for(int k = 0; k < height; k++) {
+    for(unsigned k = 0; k < height; k++) {
         free(row_pointers[k]);
     }
     free(row_pointers);
 
-    fclose(fp);
+    fclose(fpw);
 
-    png_destroy_write_struct(&png, &info);
+    png_destroy_write_struct(&png1, &info1);
 }
 
-void process_png_file(png_bytep *row_pointers, unsigned int width, unsigned int height) {
-    for(int y = 0; y < height; y++) {
+void PNG::process_png_file() const {
+    for(unsigned y = 0; y < height; y++) {
         png_bytep row = row_pointers[y];
-        for(int x = 0; x < width; x++) {
+        for(unsigned x = 0; x < width; x++) {
             png_bytep px = &(row[x * 4]);
             *px = *px/2;
             *(px+1) = *(px+1)/2;

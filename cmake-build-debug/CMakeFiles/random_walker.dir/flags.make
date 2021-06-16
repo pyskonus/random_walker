@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -isystem /usr/include/eigen3
 
-CXX_FLAGS = -std=gnu++17
+CXX_FLAGS =  -Werror -Wall -Wextra -std=gnu++17
 
