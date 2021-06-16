@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <png.h>
 #include <iostream>
+#include <Eigen/Dense>
 
 class PNG
 {
@@ -22,7 +23,10 @@ public:
     ~PNG() = default;
     void read_png_file();
     void write_png_file(char *filename) const;
-    void process_png_file() const;
+    void process_png_file() const;  /// this function is in fact unnecessary
+    void form_matrix(Eigen::MatrixXd& mat) const;
+    void from_matrix(const Eigen::MatrixXd& mat) const;
+
 private:
     png_byte color_type;
     png_byte bit_depth;

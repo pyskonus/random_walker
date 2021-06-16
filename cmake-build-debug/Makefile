@@ -169,6 +169,33 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_walker.dir/build.make CMakeFiles/random_walker.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/main_computations.o: src/main_computations.cpp.o
+
+.PHONY : src/main_computations.o
+
+# target to build an object file
+src/main_computations.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_walker.dir/build.make CMakeFiles/random_walker.dir/src/main_computations.cpp.o
+.PHONY : src/main_computations.cpp.o
+
+src/main_computations.i: src/main_computations.cpp.i
+
+.PHONY : src/main_computations.i
+
+# target to preprocess a source file
+src/main_computations.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_walker.dir/build.make CMakeFiles/random_walker.dir/src/main_computations.cpp.i
+.PHONY : src/main_computations.cpp.i
+
+src/main_computations.s: src/main_computations.cpp.s
+
+.PHONY : src/main_computations.s
+
+# target to generate assembly for a file
+src/main_computations.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_walker.dir/build.make CMakeFiles/random_walker.dir/src/main_computations.cpp.s
+.PHONY : src/main_computations.cpp.s
+
 src/rw_image.o: src/rw_image.cpp.o
 
 .PHONY : src/rw_image.o
@@ -208,6 +235,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/main_computations.o"
+	@echo "... src/main_computations.i"
+	@echo "... src/main_computations.s"
 	@echo "... src/rw_image.o"
 	@echo "... src/rw_image.i"
 	@echo "... src/rw_image.s"

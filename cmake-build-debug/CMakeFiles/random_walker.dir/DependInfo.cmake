@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/pyskonus/Downloads/random_walker/main.cpp" "/home/pyskonus/Downloads/random_walker/cmake-build-debug/CMakeFiles/random_walker.dir/main.cpp.o"
+  "/home/pyskonus/Downloads/random_walker/src/main_computations.cpp" "/home/pyskonus/Downloads/random_walker/cmake-build-debug/CMakeFiles/random_walker.dir/src/main_computations.cpp.o"
   "/home/pyskonus/Downloads/random_walker/src/rw_image.cpp" "/home/pyskonus/Downloads/random_walker/cmake-build-debug/CMakeFiles/random_walker.dir/src/rw_image.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

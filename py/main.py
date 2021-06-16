@@ -84,8 +84,8 @@ for cur_seed in range(seed_types):
         b[i] = b_entry(i+len(seeds), order, gray.shape, seeds, cur_seed, gray)
 
     L_u = get_L_u(order, seeds, gray)
-    # x = np.linalg.solve(L_u, b)
-    x = np.linalg.inv(L_u).dot(b)
+    x = np.linalg.solve(L_u, b)
+    # x = np.linalg.inv(L_u).dot(b)
 
     cur_seed_sol = np.zeros(gray.shape)
     for seeded in seeds:

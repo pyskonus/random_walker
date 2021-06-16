@@ -4,7 +4,8 @@
 
 #include "../inc/rw_image.h"
 
-PNG::PNG(const char *filename) {
+PNG::PNG(const char *filename)
+{
     fp = fopen(filename, "rb");
 
     png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -27,7 +28,8 @@ PNG::PNG(const char *filename) {
     }
 }
 
-void PNG::read_png_file() {
+void PNG::read_png_file()
+{
     /*if(setjmp(png_jmpbuf(png))) abort();*/
 
     // Read any color_type into 8bit depth, RGBA format.
@@ -64,7 +66,8 @@ void PNG::read_png_file() {
     fclose(fp);     /// could close in destructor tho
 }
 
-void PNG::write_png_file(char *filename) const {
+void PNG::write_png_file(char *filename) const
+{
     FILE *fpw = fopen(filename, "wb");
     if(!fpw) abort();
 
@@ -110,7 +113,8 @@ void PNG::write_png_file(char *filename) const {
     png_destroy_write_struct(&png1, &info1);
 }
 
-void PNG::process_png_file() const {
+void PNG::process_png_file() const
+{
     for(unsigned y = 0; y < height; y++) {
         png_bytep row = row_pointers[y];
         for(unsigned x = 0; x < width; x++) {
@@ -118,6 +122,31 @@ void PNG::process_png_file() const {
             *px = *px/2;
             *(px+1) = *(px+1)/2;
             *(px+2) = *(px+2)/2;
+        }
+    }
+}
+
+void PNG::form_matrix(Eigen::MatrixXd& mat) const
+{
+    for(unsigned y = 0; y < height; y++) {
+        png_bytep row = row_pointers[y];
+        for(unsigned x = 0; x < width; x++) {
+            png_bytep px = &(row[x * 4]);
+            double temp = *px + *(px+1) + *(px+2);  /// this will be improved to work with
+            mat.coeffRef(y, x) = temp/765;  /// 3 * 255     /// three color channels
+        }
+    }
+}
+
+void PNG::from_matrix(const Eigen::MatrixXd& mat) const
+{
+    for(unsigned y = 0; y < height; y++) {
+        png_bytep row = row_pointers[y];
+        for(unsigned x = 0; x < width; x++) {
+            png_bytep px = &(row[x * 4]);
+            *px = round(mat.coeffRef(y, x) * 255);
+            *(px+1) = round(mat.coeffRef(y, x) * 255);
+            *(px+2) = round(mat.coeffRef(y, x) * 255);
         }
     }
 }

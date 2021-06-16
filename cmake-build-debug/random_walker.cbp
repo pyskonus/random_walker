@@ -84,10 +84,16 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/pyskonus/Downloads/random_walker/inc/main_computations.h">
+			<Option target="random_walker"/>
+		</Unit>
 		<Unit filename="/home/pyskonus/Downloads/random_walker/inc/rw_image.h">
 			<Option target="random_walker"/>
 		</Unit>
 		<Unit filename="/home/pyskonus/Downloads/random_walker/main.cpp">
+			<Option target="random_walker"/>
+		</Unit>
+		<Unit filename="/home/pyskonus/Downloads/random_walker/src/main_computations.cpp">
 			<Option target="random_walker"/>
 		</Unit>
 		<Unit filename="/home/pyskonus/Downloads/random_walker/src/rw_image.cpp">
