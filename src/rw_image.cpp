@@ -1,6 +1,4 @@
-//
-// Created by pyskonus on 16.06.21.
-//
+/// GPL
 
 #include "../inc/rw_image.h"
 

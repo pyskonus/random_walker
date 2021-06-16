@@ -1,6 +1,4 @@
-//
-// Created by pyskonus on 16.06.21.
-//
+/// GPL
 
 #ifndef RANDOM_WALKER_RW_IMAGE_H
 #define RANDOM_WALKER_RW_IMAGE_H

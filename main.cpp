@@ -1,7 +1,11 @@
+/// GPL
+
 #include <cstdlib>
 #include <iostream>
-/*#include <Eigen/Sparse>*/
+#include <Eigen/SparseCore>
 #include <Eigen/Core>
+#include <Eigen/SparseLU>
+#include <Eigen/IterativeLinearSolvers>
 #include <vector>
 #include <map>
 #include <fstream>
@@ -42,8 +46,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    /*auto solutions = new Eigen::MatrixXd[seed_types];*/
+    auto solutions = new Eigen::MatrixXd[seed_types];
+    Eigen::VectorXd x{order.size() - seeds.size()};
     Eigen::VectorXd b{order.size() - seeds.size()};
+    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> solver;   /// TODO: try different solver
     for (unsigned cur_seed = 0; cur_seed < seed_types; ++cur_seed)
     {   /// L_u * x = b. Find x
         b.setZero();
@@ -51,16 +57,40 @@ int main(int argc, char *argv[]) {
             b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.height, wrapper.width}, seeds, cur_seed, gray);
         }
         auto L_u = get_L_u(order, seeds, gray, std::pair<unsigned, unsigned>{wrapper.height, wrapper.width});
+        solver.compute(L_u);
+        x = solver.solve(b);
+
+        solutions[cur_seed] = Eigen::MatrixXd{wrapper.height, wrapper.width};
+        for (const auto& el: seeds) {
+            if (el.second == cur_seed)
+                solutions[cur_seed].coeffRef(el.first.first, el.first.second) = 1;
+            else
+                solutions[cur_seed].coeffRef(el.first.first, el.first.second) = 0;
+        }
+        for (unsigned i = seeds.size(); i < order.size(); ++i) {
+            solutions[cur_seed].coeffRef(order[i].first, order[i].second) = x.coeffRef(i-seeds.size());
+        }
     }
+
+    /// form final image
+    unsigned idx_max = 0;
+    double prob_max = 0;
+    for (unsigned i = 0; i < wrapper.height; ++i) {
+        for (unsigned j = 0; j < wrapper.width; ++j) {
+            for (unsigned k = 0; k < seed_types; ++k) {
+                if (solutions[k].coeffRef(i, j) > prob_max) {
+                    idx_max = k;
+                    prob_max = solutions[k].coeffRef(i, j);
+                }
+            }
+            gray.coeffRef(i, j) = double(idx_max)/seed_types;
+            idx_max = 0; prob_max = 0;
+        }
+    }
+
 
     wrapper.from_matrix(gray);
     wrapper.write_png_file(argv[2]);
-
-    /*Eigen::SparseMatrix<double> sm(3,2);
-    sm.insert(1, 1) = 9;
-    sm.coeffRef(1, 1) = 8;
-    std::cout << sm.coeffRef(1, 1);*/
-
     return 0;
     /// TODO: check row major/col major
 }

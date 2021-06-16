@@ -1,8 +1,5 @@
-//
-// Created by pyskonus on 16.06.21.
-//
+/// GPL
 
-#include <iostream>
 #include "../inc/main_computations.h"
 
 double b_entry(unsigned u_node, const std::vector<std::pair<unsigned, unsigned>>& order,
@@ -44,12 +41,13 @@ double weight(const Eigen::MatrixXd& img, std::pair<unsigned, unsigned> node1, s
     return exp(-BETA*pow(img.coeffRef(node1.first, node1.second) - img.coeffRef(node2.first, node2.second), 2));
 }
 
-Eigen::MatrixXd get_L_u(const std::vector<std::pair<unsigned, unsigned>>& order,
+Eigen::SparseMatrix<double> get_L_u(const std::vector<std::pair<unsigned, unsigned>>& order,
                         const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds, const Eigen::MatrixXd& img,
-                        std::pair<unsigned, unsigned> shape)
+                        std::pair<unsigned, unsigned> shape)    /// this may be rewritten in the future
 {
     unsigned l = seeds.size();
-    Eigen::MatrixXd res{order.size()-l, order.size()-l};
+    Eigen::Index side = order.size()-l;
+    Eigen::SparseMatrix<double> res{side, side};
     res.setZero();
 
     for (unsigned i = l; i < order.size(); ++i) {
