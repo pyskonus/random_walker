@@ -24,6 +24,9 @@ PNG::PNG(const char *filename)
     for(unsigned y = 0; y < height; y++) {
         row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
     }
+    R = Eigen::MatrixXd{height, width};
+    G = Eigen::MatrixXd{height, width};
+    B = Eigen::MatrixXd{height, width};
 }
 
 void PNG::read_png_file()
@@ -59,12 +62,13 @@ void PNG::read_png_file()
     png_read_update_info(png, info);
 
     png_read_image(png, row_pointers);
+    form_matrix();
 
     png_destroy_read_struct(&png, &info, nullptr);
     fclose(fp);     /// could close in destructor tho
 }
 
-void PNG::write_png_file(char *filename) const
+void PNG::write_out(char *filename) const
 {
     FILE *fpw = fopen(filename, "wb");
     if(!fpw) abort();
@@ -98,6 +102,7 @@ void PNG::write_png_file(char *filename) const
 
     if (!row_pointers) abort();
 
+    from_matrix();
     png_write_image(png1, row_pointers);
     png_write_end(png1, nullptr);
 
@@ -124,27 +129,28 @@ void PNG::process_png_file() const
     }
 }
 
-void PNG::form_matrix(Eigen::MatrixXd& mat) const
+void PNG::form_matrix()
 {
     for(unsigned y = 0; y < height; y++) {
         png_bytep row = row_pointers[y];
         for(unsigned x = 0; x < width; x++) {
             png_bytep px = &(row[x * 4]);
-            double temp = *px + *(px+1) + *(px+2);  /// this will be improved to work with
-            mat.coeffRef(y, x) = temp/765;  /// 3 * 255     /// three color channels
+            R.coeffRef(y,x) = *px/255.0;
+            G.coeffRef(y,x) = *(px+1)/255.0;
+            B.coeffRef(y,x) = *(px+2)/255.0;
         }
     }
 }
 
-void PNG::from_matrix(const Eigen::MatrixXd& mat) const
+void PNG::from_matrix() const
 {
     for(unsigned y = 0; y < height; y++) {
         png_bytep row = row_pointers[y];
         for(unsigned x = 0; x < width; x++) {
             png_bytep px = &(row[x * 4]);
-            *px = round(mat.coeffRef(y, x) * 255);
-            *(px+1) = round(mat.coeffRef(y, x) * 255);
-            *(px+2) = round(mat.coeffRef(y, x) * 255);
+            *px = round(R.coeffRef(y, x) * 255);
+            *(px+1) = round(G.coeffRef(y, x) * 255);
+            *(px+2) = round(B.coeffRef(y, x) * 255);
         }
     }
 }

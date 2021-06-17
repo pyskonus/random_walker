@@ -6,18 +6,18 @@
 #include <map>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include "rw_image.h"
 
 double b_entry(unsigned, const std::vector<std::pair<unsigned, unsigned>>&, std::pair<unsigned, unsigned>,
-        const std::map<std::pair<unsigned, unsigned>, unsigned>&, unsigned, const Eigen::MatrixXd&);
+        const std::map<std::pair<unsigned, unsigned>, unsigned>&, unsigned, const PNG&);
 
 std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(unsigned, const std::vector<std::pair<unsigned, unsigned>>&,
         std::pair<unsigned, unsigned>);
 
-double weight(const Eigen::MatrixXd&, std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
+double weight(const PNG&, std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
 
 Eigen::SparseMatrix<double> get_L_u(const std::vector<std::pair<unsigned, unsigned>>&,
-        const std::map<std::pair<unsigned, unsigned>, unsigned>&, const Eigen::MatrixXd&,
-        std::pair<unsigned, unsigned>); /// this may be rewritten in the future
+        const std::map<std::pair<unsigned, unsigned>, unsigned>&, const PNG&); /// this may be rewritten in the future
 
 bool adjacent(std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
 

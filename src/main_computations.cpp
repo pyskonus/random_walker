@@ -4,13 +4,13 @@
 
 double b_entry(unsigned u_node, const std::vector<std::pair<unsigned, unsigned>>& order,
                std::pair<unsigned, unsigned> img_shape, const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds,
-               unsigned cur_seed, const Eigen::MatrixXd& img) {
+               unsigned cur_seed, const PNG& wrapper) {
     double res = 0;
     auto adj = adjacent_nodes(u_node, order, img_shape);
     for (auto & i : adj) {
         if (seeds.find(i) != seeds.end()) {
             if (seeds.at(i) == cur_seed)
-                res += weight(img, order[u_node], i);
+                res += weight(wrapper, order[u_node], i);
         }
     }
     return res;
@@ -35,29 +35,31 @@ std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(unsigned node_idx,
     return res;
 }
 
-double weight(const Eigen::MatrixXd& img, std::pair<unsigned, unsigned> node1, std::pair<unsigned, unsigned> node2) {
-    /// TODO: make it work for 3 channels
+double weight(const PNG& wrapper, std::pair<unsigned, unsigned> node1, std::pair<unsigned, unsigned> node2) {
     double BETA = 2000;
-    return exp(-BETA*pow(img.coeffRef(node1.first, node1.second) - img.coeffRef(node2.first, node2.second), 2));
+    double sq_diff_mean =
+    (pow(wrapper.R.coeffRef(node1.first, node1.second) - wrapper.R.coeffRef(node2.first, node2.second), 2)+
+     pow(wrapper.G.coeffRef(node1.first, node1.second) - wrapper.G.coeffRef(node2.first, node2.second), 2)+
+     pow(wrapper.B.coeffRef(node1.first, node1.second) - wrapper.B.coeffRef(node2.first, node2.second), 2))/3;
+    return exp(-BETA*sq_diff_mean);
 }
 
 Eigen::SparseMatrix<double> get_L_u(const std::vector<std::pair<unsigned, unsigned>>& order,
-                        const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds, const Eigen::MatrixXd& img,
-                        std::pair<unsigned, unsigned> shape)    /// this may be rewritten in the future
+                        const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds, const PNG& wrapper)
 {
     unsigned l = seeds.size();
     Eigen::Index side = order.size()-l;
-    Eigen::SparseMatrix<double> res{side, side};
+    Eigen::SparseMatrix<double/*, Eigen::ColMajor*/> res{side, side};   /// TODO: major
     res.setZero();
 
     for (unsigned i = l; i < order.size(); ++i) {
         for (unsigned j = l; j < order.size(); ++j) {
             if (i==j) {
-                auto adj = adjacent_nodes(i, order, shape);
+                auto adj = adjacent_nodes(i, order, std::pair{wrapper.height, wrapper.width});
                 for (const auto& el: adj)
-                    res.coeffRef(i-l, j-l) += weight(img, order[i], el);
+                    res.coeffRef(i-l, j-l) += weight(wrapper, order[i], el);
             } else if (adjacent(order[i], order[j])) {
-                res.coeffRef(i-l, j-l) = -weight(img, order[i], order[j]);
+                res.coeffRef(i-l, j-l) = -weight(wrapper, order[i], order[j]);
             }
         }
     }

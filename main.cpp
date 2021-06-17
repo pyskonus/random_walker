@@ -18,9 +18,6 @@ int main(int argc, char *argv[]) {
     PNG wrapper{argv[1]};
     wrapper.read_png_file();
 
-    Eigen::MatrixXd gray{wrapper.height, wrapper.width};
-    wrapper.form_matrix(gray);
-
     unsigned seed_types = 0;
     unsigned t1, t2, t3;
     std::vector<std::pair<unsigned, unsigned>> order;
@@ -54,9 +51,9 @@ int main(int argc, char *argv[]) {
     {   /// L_u * x = b. Find x
         b.setZero();
         for (unsigned i = 0; i < b.size(); ++i) {
-            b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.height, wrapper.width}, seeds, cur_seed, gray);
+            b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.height, wrapper.width}, seeds, cur_seed, wrapper);
         }
-        auto L_u = get_L_u(order, seeds, gray, std::pair<unsigned, unsigned>{wrapper.height, wrapper.width});
+        auto L_u = get_L_u(order, seeds, wrapper);
         solver.compute(L_u);
         x = solver.solve(b);
 
@@ -83,14 +80,15 @@ int main(int argc, char *argv[]) {
                     prob_max = solutions[k].coeffRef(i, j);
                 }
             }
-            gray.coeffRef(i, j) = double(idx_max)/seed_types;
+            wrapper.R.coeffRef(i, j) = double(idx_max)/seed_types;
+            wrapper.G.coeffRef(i, j) = double(idx_max)/seed_types;
+            wrapper.B.coeffRef(i, j) = double(idx_max)/seed_types;
             idx_max = 0; prob_max = 0;
         }
     }
+    delete[] solutions;
 
-
-    wrapper.from_matrix(gray);
-    wrapper.write_png_file(argv[2]);
+    wrapper.write_out(argv[2]);
     return 0;
     /// TODO: check row major/col major
 }

@@ -7,30 +7,33 @@
 #include <cstdio>
 #include <png.h>
 #include <iostream>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 class PNG
 {
 public:
     unsigned int width, height;
-    png_bytep* row_pointers;
+    Eigen::MatrixXd R;
+    Eigen::MatrixXd G;
+    Eigen::MatrixXd B;
     PNG(const char* filename);
     PNG() = delete;
     PNG(PNG const&) = delete;
     PNG(PNG&&) = delete;
     ~PNG() = default;
     void read_png_file();
-    void write_png_file(char *filename) const;
-    void process_png_file() const;  /// this function is in fact unnecessary
-    void form_matrix(Eigen::MatrixXd& mat) const;
-    void from_matrix(const Eigen::MatrixXd& mat) const;
+    void write_out(char *filename) const;
+    void process_png_file() const;  /// TODO: delete
 
 private:
+    png_bytep* row_pointers;
     png_byte color_type;
     png_byte bit_depth;
     png_structp png;
     png_infop info;
     FILE* fp;
+    void form_matrix();
+    void from_matrix() const;
 };
 
 #endif //RANDOM_WALKER_RW_IMAGE_H
