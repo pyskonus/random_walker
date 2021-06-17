@@ -36,7 +36,7 @@ std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(unsigned node_idx,
 }
 
 double weight(const PNG& wrapper, std::pair<unsigned, unsigned> node1, std::pair<unsigned, unsigned> node2) {
-    double BETA = 2000;
+    double BETA = 2000; /// TODO: beta parameter
     double sq_diff_mean =
     (pow(wrapper.R.coeffRef(node1.first, node1.second) - wrapper.R.coeffRef(node2.first, node2.second), 2)+
      pow(wrapper.G.coeffRef(node1.first, node1.second) - wrapper.G.coeffRef(node2.first, node2.second), 2)+
@@ -49,7 +49,7 @@ Eigen::SparseMatrix<double> get_L_u(const std::vector<std::pair<unsigned, unsign
 {
     unsigned l = seeds.size();
     Eigen::Index side = order.size()-l;
-    Eigen::SparseMatrix<double/*, Eigen::ColMajor*/> res{side, side};   /// TODO: major
+    Eigen::SparseMatrix<double/*, Eigen::RowMajor*/> res{side, side};   /// TODO: matrix major
     res.setZero();
 
     for (unsigned i = l; i < order.size(); ++i) {

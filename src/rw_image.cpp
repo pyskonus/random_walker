@@ -116,19 +116,6 @@ void PNG::write_out(char *filename) const
     png_destroy_write_struct(&png1, &info1);
 }
 
-void PNG::process_png_file() const
-{
-    for(unsigned y = 0; y < height; y++) {
-        png_bytep row = row_pointers[y];
-        for(unsigned x = 0; x < width; x++) {
-            png_bytep px = &(row[x * 4]);
-            *px = *px/2;
-            *(px+1) = *(px+1)/2;
-            *(px+2) = *(px+2)/2;
-        }
-    }
-}
-
 void PNG::form_matrix()
 {
     for(unsigned y = 0; y < height; y++) {

@@ -23,7 +23,6 @@ public:
     ~PNG() = default;
     void read_png_file();
     void write_out(char *filename) const;
-    void process_png_file() const;  /// TODO: delete
 
 private:
     png_bytep* row_pointers;

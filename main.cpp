@@ -4,14 +4,54 @@
 #include <iostream>
 #include <Eigen/SparseCore>
 #include <Eigen/Core>
-#include <Eigen/SparseLU>
+/*#include <Eigen/SparseLU>*/
 #include <Eigen/IterativeLinearSolvers>
 #include <vector>
 #include <map>
 #include <fstream>
+#include <thread>
 #include "inc/rw_image.h"
 #include "inc/main_computations.h"
 
+void main_alg(Eigen::VectorXd* xs, unsigned cur_seed, const std::vector<std::pair<unsigned, unsigned>>& order,
+              const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds, const PNG& wrapper) {
+    /// L_u * x = b. Find x
+    Eigen::ConjugateGradient/*SparseLU*/<Eigen::SparseMatrix<double>> solver;   /// TODO: solver type
+    Eigen::VectorXd b{order.size() - seeds.size()};
+    b.setZero();
+    for (unsigned i = 0; i < b.size(); ++i) {
+        b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.height, wrapper.width}, seeds, cur_seed, wrapper);
+    }
+    auto L_u = get_L_u(order, seeds, wrapper);
+    solver.compute(L_u);
+    xs[cur_seed] = solver.solve(b);
+}
+
+void form_final_img(const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds, PNG& wrapper, unsigned seed_types,
+                    Eigen::VectorXd* xs, const std::vector<std::pair<unsigned, unsigned>>& order) {
+    /// set seeded
+    for (const auto& coord_st: seeds) {
+        wrapper.R.coeffRef(coord_st.first.first, coord_st.first.second) = double(coord_st.second)/seed_types;
+        wrapper.G.coeffRef(coord_st.first.first, coord_st.first.second) = double(coord_st.second)/seed_types;
+        wrapper.B.coeffRef(coord_st.first.first, coord_st.first.second) = double(coord_st.second)/seed_types;
+    }
+    /// set unseeded
+    unsigned idx_max = 0;
+    double prob_max = 0;
+    auto l = seeds.size();
+    for (unsigned uns_idx = 0; uns_idx < xs[0].size(); ++uns_idx) {
+        for (unsigned st = 0; st < seed_types; ++st) {
+            if (xs[st].coeffRef(uns_idx) > prob_max) {
+                idx_max = st;
+                prob_max = xs[st].coeffRef(uns_idx);
+            }
+        }
+        wrapper.R.coeffRef(order[l+uns_idx].first, order[l+uns_idx].second) = double(idx_max)/seed_types;
+        wrapper.G.coeffRef(order[l+uns_idx].first, order[l+uns_idx].second) = double(idx_max)/seed_types;
+        wrapper.B.coeffRef(order[l+uns_idx].first, order[l+uns_idx].second) = double(idx_max)/seed_types;
+        idx_max = 0; prob_max = 0;
+    }
+}
 int main(int argc, char *argv[]) {
     if(argc != 3) {std::cerr << "invalid number of arguments. Must be 2" << std::endl; abort();}
 
@@ -43,52 +83,18 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    auto solutions = new Eigen::MatrixXd[seed_types];
-    Eigen::VectorXd x{order.size() - seeds.size()};
-    Eigen::VectorXd b{order.size() - seeds.size()};
-    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> solver;   /// TODO: try different solver
+    auto xs = new Eigen::VectorXd[seed_types];
+    std::vector<std::thread> threads{seed_types};
     for (unsigned cur_seed = 0; cur_seed < seed_types; ++cur_seed)
-    {   /// L_u * x = b. Find x
-        b.setZero();
-        for (unsigned i = 0; i < b.size(); ++i) {
-            b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.height, wrapper.width}, seeds, cur_seed, wrapper);
-        }
-        auto L_u = get_L_u(order, seeds, wrapper);
-        solver.compute(L_u);
-        x = solver.solve(b);
+        threads[cur_seed] = std::thread{main_alg, xs, cur_seed, std::ref(order), std::ref(seeds), std::ref(wrapper)};
 
-        solutions[cur_seed] = Eigen::MatrixXd{wrapper.height, wrapper.width};
-        for (const auto& el: seeds) {
-            if (el.second == cur_seed)
-                solutions[cur_seed].coeffRef(el.first.first, el.first.second) = 1;
-            else
-                solutions[cur_seed].coeffRef(el.first.first, el.first.second) = 0;
-        }
-        for (unsigned i = seeds.size(); i < order.size(); ++i) {
-            solutions[cur_seed].coeffRef(order[i].first, order[i].second) = x.coeffRef(i-seeds.size());
-        }
-    }
+    for (unsigned cur_seed = 0; cur_seed < seed_types; ++cur_seed)
+        threads[cur_seed].join();
 
-    /// form final image
-    unsigned idx_max = 0;
-    double prob_max = 0;
-    for (unsigned i = 0; i < wrapper.height; ++i) {
-        for (unsigned j = 0; j < wrapper.width; ++j) {
-            for (unsigned k = 0; k < seed_types; ++k) {
-                if (solutions[k].coeffRef(i, j) > prob_max) {
-                    idx_max = k;
-                    prob_max = solutions[k].coeffRef(i, j);
-                }
-            }
-            wrapper.R.coeffRef(i, j) = double(idx_max)/seed_types;
-            wrapper.G.coeffRef(i, j) = double(idx_max)/seed_types;
-            wrapper.B.coeffRef(i, j) = double(idx_max)/seed_types;
-            idx_max = 0; prob_max = 0;
-        }
-    }
-    delete[] solutions;
+    form_final_img(seeds, wrapper, seed_types, xs, order);
+
+    delete[] xs;
 
     wrapper.write_out(argv[2]);
     return 0;
-    /// TODO: check row major/col major
 }
