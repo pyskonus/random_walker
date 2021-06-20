@@ -16,6 +16,7 @@ public:
     Eigen::MatrixXd R;
     Eigen::MatrixXd G;
     Eigen::MatrixXd B;
+    bool int_range;
     PNG(const char* filename);
     PNG() = delete;
     PNG(PNG const&) = delete;
@@ -31,8 +32,9 @@ private:
     png_structp png;
     png_infop info;
     FILE* fp;
-    void form_matrix();
+    void to_matrix();
     void from_matrix() const;
+    void check_range();
 };
 
 #endif //RANDOM_WALKER_RW_IMAGE_H

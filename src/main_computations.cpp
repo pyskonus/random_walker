@@ -6,7 +6,7 @@ double b_entry(unsigned u_node, const std::vector<std::pair<unsigned, unsigned>>
                std::pair<unsigned, unsigned> img_shape, const std::map<std::pair<unsigned, unsigned>, unsigned>& seeds,
                unsigned cur_seed, const PNG& wrapper) {
     double res = 0;
-    auto adj = adjacent_nodes(u_node, order, img_shape);
+    auto adj = adjacent_nodes(order[u_node], img_shape);
     for (auto & i : adj) {
         if (seeds.find(i) != seeds.end()) {
             if (seeds.at(i) == cur_seed)
@@ -16,11 +16,9 @@ double b_entry(unsigned u_node, const std::vector<std::pair<unsigned, unsigned>>
     return res;
 }
 
-std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(unsigned node_idx,
-                                                          const std::vector<std::pair<unsigned, unsigned>>& order,
+std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(std::pair<unsigned, unsigned> node,
                                                           std::pair<unsigned, unsigned> img_shape)
 {
-    auto node = order[node_idx];
     std::vector<std::pair<unsigned, unsigned>> res;
 
     if (node.first != 0)
@@ -55,7 +53,7 @@ Eigen::SparseMatrix<double> get_L_u(const std::vector<std::pair<unsigned, unsign
     for (unsigned i = l; i < order.size(); ++i) {
         for (unsigned j = l; j < order.size(); ++j) {
             if (i==j) {
-                auto adj = adjacent_nodes(i, order, std::pair{wrapper.height, wrapper.width});
+                auto adj = adjacent_nodes(order[i], std::pair{wrapper.height, wrapper.width});
                 for (const auto& el: adj)
                     res.coeffRef(i-l, j-l) += weight(wrapper, order[i], el);
             } else if (adjacent(order[i], order[j])) {

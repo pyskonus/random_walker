@@ -39,6 +39,8 @@ Eigen/SparseCore
 -
 Eigen/Core
 -
+Eigen/SparseLU
+-
 Eigen/IterativeLinearSolvers
 -
 vector
@@ -52,10 +54,6 @@ thread
 inc/rw_image.h
 /home/pyskonus/Downloads/random_walker/inc/rw_image.h
 inc/main_computations.h
-/home/pyskonus/Downloads/random_walker/inc/main_computations.h
-
-/home/pyskonus/Downloads/random_walker/src/main_computations.cpp
-../inc/main_computations.h
 /home/pyskonus/Downloads/random_walker/inc/main_computations.h
 
 /usr/include/eigen3/Eigen/Core
@@ -522,6 +520,48 @@ src/SparseCore/SparseSolverBase.h
 src/Core/util/ReenableStupidWarnings.h
 /usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
 
+/usr/include/eigen3/Eigen/SparseLU
+SparseCore
+/usr/include/eigen3/Eigen/SparseCore
+OrderingMethods
+/usr/include/eigen3/Eigen/OrderingMethods
+src/SparseLU/SparseLU_gemm_kernel.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h
+src/SparseLU/SparseLU_Structs.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Structs.h
+src/SparseLU/SparseLU_SupernodalMatrix.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h
+src/SparseLU/SparseLUImpl.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLUImpl.h
+src/SparseCore/SparseColEtree.h
+/usr/include/eigen3/Eigen/src/SparseCore/SparseColEtree.h
+src/SparseLU/SparseLU_Memory.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Memory.h
+src/SparseLU/SparseLU_heap_relax_snode.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h
+src/SparseLU/SparseLU_relax_snode.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_relax_snode.h
+src/SparseLU/SparseLU_pivotL.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pivotL.h
+src/SparseLU/SparseLU_panel_dfs.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_dfs.h
+src/SparseLU/SparseLU_kernel_bmod.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h
+src/SparseLU/SparseLU_panel_bmod.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_bmod.h
+src/SparseLU/SparseLU_column_dfs.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_dfs.h
+src/SparseLU/SparseLU_column_bmod.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_bmod.h
+src/SparseLU/SparseLU_copy_to_ucol.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h
+src/SparseLU/SparseLU_pruneL.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pruneL.h
+src/SparseLU/SparseLU_Utils.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Utils.h
+src/SparseLU/SparseLU.h
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU.h
+
 /usr/include/eigen3/Eigen/src/Core/Array.h
 
 /usr/include/eigen3/Eigen/src/Core/ArrayBase.h
@@ -866,6 +906,8 @@ Eigen_Colamd.h
 
 /usr/include/eigen3/Eigen/src/SparseCore/SparseBlock.h
 
+/usr/include/eigen3/Eigen/src/SparseCore/SparseColEtree.h
+
 /usr/include/eigen3/Eigen/src/SparseCore/SparseCompressedBase.h
 
 /usr/include/eigen3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h
@@ -921,6 +963,40 @@ Eigen_Colamd.h
 /usr/include/eigen3/Eigen/src/SparseCore/SparseView.h
 
 /usr/include/eigen3/Eigen/src/SparseCore/TriangularSolver.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLUImpl.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Memory.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Structs.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Utils.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_bmod.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_dfs.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_bmod.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_dfs.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pivotL.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pruneL.h
+
+/usr/include/eigen3/Eigen/src/SparseLU/SparseLU_relax_snode.h
 
 /usr/include/eigen3/Eigen/src/misc/blas.h
 

@@ -2,7 +2,7 @@
 
 #include "../inc/rw_image.h"
 
-PNG::PNG(const char *filename)
+PNG::PNG(const char *filename) : int_range(false)
 {
     fp = fopen(filename, "rb");
 
@@ -32,10 +32,6 @@ PNG::PNG(const char *filename)
 void PNG::read_png_file()
 {
     /*if(setjmp(png_jmpbuf(png))) abort();*/
-
-    // Read any color_type into 8bit depth, RGBA format.
-    // See http://www.libpng.org/pub/png/libpng-manual.txt
-
     if(bit_depth == 16)
         png_set_strip_16(png);
 
@@ -62,7 +58,8 @@ void PNG::read_png_file()
     png_read_update_info(png, info);
 
     png_read_image(png, row_pointers);
-    form_matrix();
+    check_range();
+    to_matrix();
 
     png_destroy_read_struct(&png, &info, nullptr);
     fclose(fp);     /// could close in destructor tho
@@ -116,15 +113,21 @@ void PNG::write_out(char *filename) const
     png_destroy_write_struct(&png1, &info1);
 }
 
-void PNG::form_matrix()
+void PNG::to_matrix()
 {
     for(unsigned y = 0; y < height; y++) {
         png_bytep row = row_pointers[y];
         for(unsigned x = 0; x < width; x++) {
             png_bytep px = &(row[x * 4]);
-            R.coeffRef(y,x) = *px/255.0;
-            G.coeffRef(y,x) = *(px+1)/255.0;
-            B.coeffRef(y,x) = *(px+2)/255.0;
+            if (int_range) {
+                R.coeffRef(y,x) = *px/255.0;
+                G.coeffRef(y,x) = *(px+1)/255.0;
+                B.coeffRef(y,x) = *(px+2)/255.0;
+            } else {
+                R.coeffRef(y,x) = *px;
+                G.coeffRef(y,x) = *(px+1);
+                B.coeffRef(y,x) = *(px+2);
+            }
         }
     }
 }
@@ -138,6 +141,19 @@ void PNG::from_matrix() const
             *px = round(R.coeffRef(y, x) * 255);
             *(px+1) = round(G.coeffRef(y, x) * 255);
             *(px+2) = round(B.coeffRef(y, x) * 255);
+        }
+    }
+}
+
+void PNG::check_range() {
+    for(unsigned y = 0; y < height; y++) {
+        png_bytep row = row_pointers[y];
+        for(unsigned x = 0; x < width; x++) {
+            png_bytep px = &(row[x * 4]);
+            if (*px > 1 || *(px+1) > 1 || *(px+2) > 1) {
+                int_range = true;
+                return;
+            }
         }
     }
 }

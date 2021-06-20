@@ -11,8 +11,7 @@
 double b_entry(unsigned, const std::vector<std::pair<unsigned, unsigned>>&, std::pair<unsigned, unsigned>,
         const std::map<std::pair<unsigned, unsigned>, unsigned>&, unsigned, const PNG&);
 
-std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(unsigned, const std::vector<std::pair<unsigned, unsigned>>&,
-        std::pair<unsigned, unsigned>);
+std::vector<std::pair<unsigned, unsigned>> adjacent_nodes(std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
 
 double weight(const PNG&, std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>);
 
