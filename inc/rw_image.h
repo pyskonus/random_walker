@@ -12,27 +12,29 @@
 class PNG
 {
 public:
-    unsigned int width, height;
-    Eigen::MatrixXd R;
-    Eigen::MatrixXd G;
-    Eigen::MatrixXd B;
+    unsigned int m_width, m_height;
+    Eigen::MatrixXd m_R;
+    Eigen::MatrixXd m_G;
+    Eigen::MatrixXd m_B;
     PNG(const char* filename);
     PNG() = delete;
     PNG(PNG const&) = delete;
     PNG(PNG&&) = delete;
     ~PNG() = default;
-    void read_png_file();
-    void write_out(char *filename) const;
+    void readPngFile();
+    void writeOut(char *filename) const;
 
 private:
-    png_bytep* row_pointers;
-    png_byte color_type;
-    png_byte bit_depth;
-    png_structp png;
-    png_infop info;
-    FILE* fp;
-    void form_matrix();
-    void from_matrix() const;
+    png_bytep* m_rowPointers;
+    png_byte m_colorType;
+    png_byte m_bitDepth;
+    png_structp m_png;
+    png_infop m_info;
+    FILE* m_fp;
+    bool m_int_range;
+    void toMatrix();
+    void fromMatrix() const;
+    void checkRange();
 };
 
 #endif //RANDOM_WALKER_RW_IMAGE_H

@@ -9,6 +9,7 @@ CMakeFiles/random_walker.dir/main.cpp.o
  /usr/include/eigen3/Eigen/IterativeLinearSolvers
  /usr/include/eigen3/Eigen/OrderingMethods
  /usr/include/eigen3/Eigen/SparseCore
+ /usr/include/eigen3/Eigen/SparseLU
  /usr/include/eigen3/Eigen/src/Core/Array.h
  /usr/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -158,6 +159,7 @@ CMakeFiles/random_walker.dir/main.cpp.o
  /usr/include/eigen3/Eigen/src/SparseCore/MappedSparseMatrix.h
  /usr/include/eigen3/Eigen/src/SparseCore/SparseAssign.h
  /usr/include/eigen3/Eigen/src/SparseCore/SparseBlock.h
+ /usr/include/eigen3/Eigen/src/SparseCore/SparseColEtree.h
  /usr/include/eigen3/Eigen/src/SparseCore/SparseCompressedBase.h
  /usr/include/eigen3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h
  /usr/include/eigen3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h
@@ -181,6 +183,23 @@ CMakeFiles/random_walker.dir/main.cpp.o
  /usr/include/eigen3/Eigen/src/SparseCore/SparseVector.h
  /usr/include/eigen3/Eigen/src/SparseCore/SparseView.h
  /usr/include/eigen3/Eigen/src/SparseCore/TriangularSolver.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLUImpl.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Memory.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Structs.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Utils.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_bmod.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_dfs.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_bmod.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_dfs.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pivotL.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pruneL.h
+ /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_relax_snode.h
  /usr/include/eigen3/Eigen/src/misc/blas.h
  /usr/include/eigen3/Eigen/src/plugins/ArrayCwiseBinaryOps.h
  /usr/include/eigen3/Eigen/src/plugins/ArrayCwiseUnaryOps.h
