@@ -5,7 +5,7 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <png.h>
+#include "png.h"
 #include <iostream>
 #include <Eigen/Core>
 
