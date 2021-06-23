@@ -8,7 +8,6 @@
 /*#include <Eigen/IterativeLinearSolvers>*/
 #include <vector>
 #include <map>
-/*#include <fstream>*/
 #include <thread>
 #include "inc/rw_image.h"
 #include "inc/main_computations.h"

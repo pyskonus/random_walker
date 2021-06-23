@@ -50,37 +50,24 @@ Eigen::SparseMatrix<double> get_L_u(const std::vector<std::pair<unsigned, unsign
 {
     unsigned l = seeds.size();
     Eigen::Index side = order.size()-l;
-    Eigen::SparseMatrix<double/*, Eigen::RowMajor*/> res{side, side};   /// TODO: matrix major
+    Eigen::SparseMatrix<double, Eigen::RowMajor> res{side, side};   /// TODO: matrix major
     res.setZero();
 
+    unsigned j;
     for (unsigned i = l; i < order.size(); ++i)
     {
-        for (unsigned j = l; j < order.size(); ++j)
+        auto adj = adjacent_nodes(order[i], std::pair{wrapper.m_height, wrapper.m_width});
+        for (const auto& el: adj)
         {
-            if (i==j)
+            res.coeffRef(i-l, i-l) += weight(wrapper, order[i], el);
+
+            if (seeds.find(el) == seeds.end())
             {
-                auto adj = adjacent_nodes(order[i], std::pair{wrapper.m_height, wrapper.m_width});
-                for (const auto& el: adj)
-                    res.coeffRef(i-l, j-l) += weight(wrapper, order[i], el);
-            } else if (adjacent(order[i], order[j])) {
+                j = std::find(order.begin()+l, order.end(), el) - order.begin();
                 res.coeffRef(i-l, j-l) = -weight(wrapper, order[i], order[j]);
             }
         }
+
     }
     return res;
-}
-
-bool adjacent(std::pair<unsigned, unsigned> node1, std::pair<unsigned, unsigned> node2)
-{
-    if (node1.first == node2.first)
-    {
-        if (node1.second == node2.second + 1 || node1.second == node2.second - 1)
-            return true;
-    }
-    if (node1.second == node2.second)
-    {
-        if (node1.first == node2.first + 1 || node1.first == node2.first - 1)
-            return true;
-    }
-    return false;
 }
