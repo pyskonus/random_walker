@@ -8,7 +8,6 @@
 /*#include <Eigen/IterativeLinearSolvers>*/
 #include <vector>
 #include <map>
-/*#include <fstream>*/
 #include <thread>
 #include "inc/rw_image.h"
 #include "inc/main_computations.h"
@@ -71,24 +70,24 @@ int main(int argc, char *argv[])
     std::map<std::pair<unsigned, unsigned>, unsigned> seeds;
 
     /// initialize seeds
-    for (unsigned y = 0; y < image.m_height; ++y)
+    for (unsigned y = 0; y < mask.m_height; ++y)
     {
-        for (unsigned x = 0; x < image.m_width; ++x)
+        for (unsigned x = 0; x < mask.m_width; ++x)
         {
-            if (image.m_R.coeffRef(x, y) == 1) /// white
+            if (mask.m_R.coeffRef(x, y) == 1) /// white
             {
                 for (const auto& neighbour: adjacent_nodes(std::pair<unsigned, unsigned>{x,y},
-                                                           std::pair{image.m_height, image.m_width}))
+                                                           std::pair{mask.m_height, mask.m_width}))
                 {
-                    if (image.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && image.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
+                    if (mask.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && mask.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
                         seeds[std::pair<unsigned, unsigned>{x,y}] = 0;  /// 0 means it's the thing
                 }
-            } else if (image.m_R.coeffRef(x, y) == 0)  /// black
+            } else if (mask.m_R.coeffRef(x, y) == 0)  /// black
             {
                 for (const auto& neighbour: adjacent_nodes(std::pair<unsigned, unsigned>{x,y},
-                                                           std::pair{image.m_height, image.m_width}))
+                                                           std::pair{mask.m_height, mask.m_width}))
                 {
-                    if (image.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && image.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
+                    if (mask.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && mask.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
                         seeds[std::pair<unsigned, unsigned>{x,y}] = 1;  /// 1 means it's the background
                 }
             }
