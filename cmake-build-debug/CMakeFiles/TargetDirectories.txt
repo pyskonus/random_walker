@@ -1,3 +1,0 @@
-/home/pyskonus/Downloads/random_walker/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/pyskonus/Downloads/random_walker/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/pyskonus/Downloads/random_walker/cmake-build-debug/CMakeFiles/random_walker.dir
