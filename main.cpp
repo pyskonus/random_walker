@@ -24,6 +24,7 @@ void main_alg(Eigen::VectorXd& X, const std::vector<std::pair<unsigned, unsigned
         b.coeffRef(i) = b_entry(i+seeds.size(), order, std::pair{wrapper.m_height, wrapper.m_width}, seeds, 0, wrapper);
     }
     auto L_u = get_L_u(order, seeds, wrapper);
+
     solver.compute(L_u);
     X = solver.solve(b);
 }
@@ -36,18 +37,18 @@ void form_final_img(PNG& image, const PNG& mask, const Eigen::VectorXd& X, unsig
     {
         for (unsigned x = 0; x < image.m_width; ++x)
         {
-            if (mask.m_R.coeffRef(x, y) == 0)   /// definitely background
+            if (mask.m_R.coeffRef(y, x) == 0)   /// definitely background
             {
-                image.m_R.coeffRef(x, y) = 0;
-                image.m_G.coeffRef(x, y) = 0;
-                image.m_B.coeffRef(x, y) = 0;
+                image.m_R.coeffRef(y, x) = 0;
+                image.m_G.coeffRef(y, x) = 0;
+                image.m_B.coeffRef(y, x) = 0;
             }
         }
     }
     /// set unseeded
     for (unsigned x_idx = 0; x_idx < X.size(); ++x_idx)
     {
-        if (X.coeffRef(x_idx) > 0.5)
+        if (X.coeffRef(x_idx) < 0.5)
         {
             image.m_R.coeffRef(order[x_idx + ss].first, order[x_idx + ss].second) = 0;
             image.m_G.coeffRef(order[x_idx + ss].first, order[x_idx + ss].second) = 0;
@@ -70,25 +71,25 @@ int main(int argc, char *argv[])
     std::map<std::pair<unsigned, unsigned>, unsigned> seeds;
 
     /// initialize seeds
-    for (unsigned y = 0; y < image.m_height; ++y)
+    for (unsigned y = 0; y < mask.m_height; ++y)
     {
-        for (unsigned x = 0; x < image.m_width; ++x)
+        for (unsigned x = 0; x < mask.m_width; ++x)
         {
-            if (image.m_R.coeffRef(x, y) == 1) /// white
+            if (mask.m_R.coeffRef(y, x) == 1) /// white
             {
-                for (const auto& neighbour: adjacent_nodes(std::pair<unsigned, unsigned>{x,y},
-                                                           std::pair{image.m_height, image.m_width}))
+                for (const auto& neighbour: adjacent_nodes(std::pair<unsigned, unsigned>{y,x},
+                                                           std::pair{mask.m_height, mask.m_width}))
                 {
-                    if (image.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && image.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
-                        seeds[std::pair<unsigned, unsigned>{x,y}] = 0;  /// 0 means it's the thing
+                    if (mask.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && mask.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
+                        seeds[std::pair<unsigned, unsigned>{y,x}] = 0;  /// 0 means it's the thing
                 }
-            } else if (image.m_R.coeffRef(x, y) == 0)  /// black
+            } else if (mask.m_R.coeffRef(y, x) == 0)  /// black
             {
-                for (const auto& neighbour: adjacent_nodes(std::pair<unsigned, unsigned>{x,y},
-                                                           std::pair{image.m_height, image.m_width}))
+                for (const auto& neighbour: adjacent_nodes(std::pair<unsigned, unsigned>{y,x},
+                                                           std::pair{mask.m_height, mask.m_width}))
                 {
-                    if (image.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && image.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
-                        seeds[std::pair<unsigned, unsigned>{x,y}] = 1;  /// 1 means it's the background
+                    if (mask.m_R.coeffRef(neighbour.first, neighbour.second) != 0 && mask.m_R.coeffRef(neighbour.first, neighbour.second) != 1)
+                        seeds[std::pair<unsigned, unsigned>{y,x}] = 1;  /// 1 means it's the background
                 }
             }
         }
@@ -98,13 +99,12 @@ int main(int argc, char *argv[])
     for (const auto& el: seeds)
         order.emplace_back(el.first);  /// seeded pixels must be first
 
-    for (unsigned i = 0; i < image.m_height; ++i)
+    for (unsigned i = 0; i < mask.m_height; ++i)
     {
-        for (unsigned j = 0; j < image.m_width; ++j)
+        for (unsigned j = 0; j < mask.m_width; ++j)
         {
-            auto temp = std::pair{i,j};
-            if (seeds.find(temp) == seeds.end())
-                order.emplace_back(temp);       /// now add unseeded
+            if (mask.m_R.coeffRef(i,j) != 0 && mask.m_R.coeffRef(i,j) != 1)
+                order.emplace_back(std::pair<unsigned, unsigned>{i,j});       /// now add unseeded
         }
     }
 

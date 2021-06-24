@@ -54,8 +54,8 @@ def get_L_u(order, seeds, img_):
                 res[i-l,j-l] = -weight(img_, order[i], order[j])
     return res
 
-img0 = img.imread("../images/text2.png")
-gray = img0[:, :, 0]
+image = img.imread("../images/text2.png")
+gray = image[:, :, 0]
 
 # read the dict
 seed_types = 0
